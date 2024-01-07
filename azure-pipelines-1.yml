@@ -1,35 +1,75 @@
-# Docker
-# Build a Docker image
-# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
-
+name : Docker-CI
 trigger:
-- master
-
-resources:
-- repo: self
-
-# pool:
-#   vmImage: 'windows-latest'
+  branches:
+    include:
+      - master
+ 
+pool:
+  vmImage: 'ubuntu-latest'
 
 variables:
-  tag: '$(Build.BuildId)'
+  ImageName: 'lisesoee2/texttransformer:$(Build.BuildId)'  
 
 stages:
-- stage: BuildAndPush
+- stage: Build
   displayName: Build image
   jobs:  
   - job: DockerImage
     displayName: Build and push Docker image
     steps:
-    - task: Docker@2
+    - task: Docker@1
+      displayName: 'Build the Docker image'
       inputs:
-        containerRegistry: 'Docker Hub'
-        repository: 'lisesrepo'
-        command: 'buildAndPush'
-        Dockerfile: '**/Dockerfile'
-        buildContext: '$(Build.SourcesDirectory)/'
-        tags: |
-          $(tag)
+        containerregistrytype: 'Container Registry'
+        dockerRegistryEndpoint: 'Docker Hub'
+        command: 'Build an image'
+        dockerFile: '**/Dockerfile'
+        imageName: '$(ImageName)'
+        includeLatestTag: true
+        useDefaultContext: false
+        buildContext: '.'
+    - task: Docker@1
+      displayName: 'Push the Docker image to Dockerhub'
+      inputs:
+        containerregistrytype: 'Container Registry'
+        dockerRegistryEndpoint: 'Docker Hub'
+        command: 'Push an image'
+        imageName: '$(ImageName)'
+      condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest')) 
+
+
+# # Docker
+# # Build a Docker image
+# # https://docs.microsoft.com/azure/devops/pipelines/languages/docker
+
+# trigger:
+# - master
+
+# resources:
+# - repo: self
+
+# # pool:
+# #   vmImage: 'windows-latest'
+
+# variables:
+#   tag: '$(Build.BuildId)'
+
+# stages:
+# - stage: BuildAndPush
+#   displayName: Build image
+#   jobs:  
+#   - job: DockerImage
+#     displayName: Build and push Docker image
+#     steps:
+#     - task: Docker@2
+#       inputs:
+#         containerRegistry: 'Docker Hub'
+#         repository: 'lisesrepo'
+#         command: 'buildAndPush'
+#         Dockerfile: '**/Dockerfile'
+#         buildContext: '$(Build.SourcesDirectory)/'
+#         tags: |
+#           $(tag)
 
 
 # - stage: Build
