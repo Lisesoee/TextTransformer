@@ -1,6 +1,6 @@
 # Automatically trigger on merges / commits to 'main' branch
 trigger:
-- main
+- master
 
 # Specify build agent image
 pool:
