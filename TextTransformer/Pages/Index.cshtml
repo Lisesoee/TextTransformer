@@ -1,0 +1,28 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome to the Test Transformation Application</h1>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Transformation Application</title>
+</head>
+<body>
+    <h1>Please input a text: </h1>
+
+    <form method="post" asp-page-handler="Transform">
+        <input type="text" id="text" name="text" placeholder="Hello World">
+        <button type="submit">Transform text</button>
+    </form>
+    <p>Result: <span>@Model.TransformedResult</span></p>
+
+    <br>
+</body>
+</html>
