@@ -1,14 +1,10 @@
-# Automatically trigger on merges / commits to 'main' branch
 trigger:
 - master
 
-# Specify build agent image
 pool:
   vmImage: 'windows-latest'
 
-# Some config variables for pipeline
 variables:
-  # specify the Build Configuration to build for the solution
   buildConfiguration: 'debug' #'Release'
 
 stages:
