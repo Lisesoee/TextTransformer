@@ -1,0 +1,71 @@
+# Automatically trigger on merges / commits to 'main' branch
+trigger:
+- main
+
+# Specify build agent image
+pool:
+  vmImage: 'windows-latest'
+
+# Some config variables for pipeline
+variables:
+  # specify the Build Configuration to build for the solution
+  buildConfiguration: 'debug' #'Release'
+
+stages:
+- stage: 'Build'
+  displayName: 'Build the web application'
+  jobs:
+  - job: 'Build'
+    displayName: 'Build job'
+
+    steps:
+    - task: NuGetToolInstaller@1
+
+    - task: NuGetCommand@2
+      inputs:
+        restoreSolution: '**/*.sln'
+
+    - task: UseDotNet@2
+      displayName: 'Use .NET SDK v7.x'
+      inputs:
+        version: '7.x'
+
+    - task: DotNetCoreCLI@2
+      displayName: 'Restore project dependencies'
+      inputs:
+        command: 'restore'
+        projects: '**/*.csproj'
+
+    - task: DotNetCoreCLI@2
+      displayName: 'Build the project - $(buildConfiguration)'
+      inputs:
+        command: 'build'
+        arguments: '--no-restore --configuration $(buildConfiguration)'
+        projects: '**/*.csproj'
+
+    - task: DotNetCoreCLI@2
+      displayName: 'Install .NET tools from local manifest'
+      inputs:
+        command: custom
+        custom: tool
+        arguments: 'restore'
+
+    - task: DotNetCoreCLI@2
+      displayName: 'Run Unit Tests - $(buildConfiguration)'
+      inputs:
+        command: 'test'
+        arguments: '--no-build --configuration $(buildConfiguration)'
+        publishTestResults: false
+
+    - task: DotNetCoreCLI@2
+      displayName: 'Publish the project - $(buildConfiguration)'
+      inputs:
+        command: 'publish'
+        projects: '**/*.csproj'
+        publishWebProjects: false
+        arguments: '--no-build --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/$(buildConfiguration)'
+        zipAfterPublish: true
+
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifact: drop'
+      condition: succeeded()
