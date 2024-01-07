@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using TextTransformation.Services;
+using TextTransformer.Services;
 
-namespace TextTransformation.Pages
+namespace TextTransformer.Pages
 {
     public class IndexModel : PageModel
     {

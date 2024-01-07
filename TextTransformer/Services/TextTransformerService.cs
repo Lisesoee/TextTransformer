@@ -1,6 +1,6 @@
 ﻿using RestSharp;
 
-namespace TextTransformation.Services
+namespace TextTransformer.Services
 {
     public class TextTransformerService
     {
