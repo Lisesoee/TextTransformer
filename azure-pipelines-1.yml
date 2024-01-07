@@ -27,7 +27,7 @@ stages:
         repository: 'lisesrepo'
         command: 'buildAndPush'
         Dockerfile: '**/Dockerfile'
-        buildContext: '$(Build.SourcesDirectory)/TextTransformer/TextTransformer/'
+        buildContext: '$(Build.SourcesDirectory)/'
         tags: |
           $(tag)
 
