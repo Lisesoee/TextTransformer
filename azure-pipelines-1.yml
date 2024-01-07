@@ -8,45 +8,50 @@ trigger:
 resources:
 - repo: self
 
-pool:
-  vmImage: 'windows-latest'
+# pool:
+#   vmImage: 'windows-latest'
 
 variables:
   tag: '$(Build.BuildId)'
 
 stages:
-- stage: BuildAndPush
-  displayName: Build image
-  jobs:  
-  - job: DockerImage
-    displayName: Build and push Docker image
-    steps:
-    - task: Docker@2
-      inputs:
-        containerRegistry: 'Docker Hub'
-        repository: 'lisesrepo'
-        command: 'buildAndPush'
-        Dockerfile: '**/Dockerfile'
-
-# - stage: Build
+# - stage: BuildAndPush
 #   displayName: Build image
-#   jobs:
-#   - job: Build
-#     displayName: Build
-#     # pool:
-#     #   vmImage: ubuntu-latest
-#     pool:
-#       vmImage: 'windows-latest'
+#   jobs:  
+#   - job: DockerImage
+#     displayName: Build and push Docker image
 #     steps:
-#     - task: Docker@2
-#       displayName: Build an image
-#       inputs:
-#         command: build
-#         dockerfile: '$(Build.SourcesDirectory)/TextTransformer/Dockerfile'
-#         tags: |
-#           $(tag)
 #     - task: Docker@2
 #       inputs:
 #         containerRegistry: 'Docker Hub'
 #         repository: 'lisesrepo'
-#         command: 'push'
+#         command: 'buildAndPush'
+#         Dockerfile: '**/Dockerfile'
+#         buildContext: '$(Build.SourcesDirectory)/Hello-Blazor/'
+#         tags: |
+#           $(tag)
+
+
+- stage: Build
+  displayName: Build image
+  jobs:
+  - job: Build
+    displayName: Build
+    # pool:
+    #   vmImage: ubuntu-latest
+    pool:
+      vmImage: 'windows-latest'
+    steps:
+    - task: Docker@2
+      displayName: Build an image
+      inputs:
+        command: build
+        dockerfile: '$(Build.SourcesDirectory)/TextTransformer/Dockerfile'
+        buildContext: '$(Build.SourcesDirectory)/TextTransformer/'
+        tags: |
+          $(tag)
+    - task: Docker@2
+      inputs:
+        containerRegistry: 'Docker Hub'
+        repository: 'lisesrepo'
+        command: 'push'
